@@ -56,7 +56,7 @@ const HomeAttendant = () => {
           </h1>
           
           <p className="text-xl md:text-2xl text-gray-600 max-w-2xl mb-10">
-            Your thoughtful AI companion for a more peaceful and organized home life.
+            Your 24/7 AI Home Attendant for a healthier life.
           </p>
           
           <div className="flex flex-col sm:flex-row space-y-4 sm:space-y-0 sm:space-x-4">
