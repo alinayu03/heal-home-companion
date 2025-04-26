@@ -1,6 +1,5 @@
-
 import React, { useState, useRef } from 'react';
-import { Send, Upload, Image } from 'lucide-react';
+import { Send, Upload, Camera } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Textarea } from '@/components/ui/textarea';
@@ -27,6 +26,7 @@ const ChatInterface: React.FC = () => {
   const [inputValue, setInputValue] = useState('');
   const [isTyping, setIsTyping] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const cameraInputRef = useRef<HTMLInputElement>(null);
   
   const handleSendMessage = () => {
     if (inputValue.trim() === '') return;
@@ -93,6 +93,42 @@ const ChatInterface: React.FC = () => {
             "• Monitor for any increased redness, swelling, or discharge\n" +
             "• Follow your prescribed wound care routine\n\n" +
             "Would you like more specific guidance about wound care?";
+          
+          const assistantMessage: Message = {
+            id: Date.now().toString(),
+            content: analysis,
+            sender: 'assistant',
+            timestamp: new Date(),
+            type: 'text',
+          };
+          
+          setMessages(prev => [...prev, assistantMessage]);
+          setIsTyping(false);
+        }, 2000);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+  
+  const handleCameraCapture = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = () => {
+        const userMessage: Message = {
+          id: Date.now().toString(),
+          content: reader.result as string,
+          sender: 'user',
+          timestamp: new Date(),
+          type: 'image',
+        };
+        
+        setMessages(prev => [...prev, userMessage]);
+        setIsTyping(true);
+        
+        // Simulate AI analysis
+        setTimeout(() => {
+          const analysis = "I've analyzed the photo you just took. The image appears clear enough for assessment. Would you like me to analyze any specific aspect or concern from this photo?";
           
           const assistantMessage: Message = {
             id: Date.now().toString(),
@@ -181,8 +217,18 @@ const ChatInterface: React.FC = () => {
               size="icon"
               onClick={() => fileInputRef.current?.click()}
               className="flex-shrink-0"
+              title="Upload image"
             >
-              <Image className="h-4 w-4" />
+              <Upload className="h-4 w-4" />
+            </Button>
+            <Button 
+              variant="outline" 
+              size="icon"
+              onClick={() => cameraInputRef.current?.click()}
+              className="flex-shrink-0"
+              title="Take photo"
+            >
+              <Camera className="h-4 w-4" />
             </Button>
             <input
               ref={fileInputRef}
@@ -190,6 +236,14 @@ const ChatInterface: React.FC = () => {
               accept="image/*"
               className="hidden"
               onChange={handleImageUpload}
+            />
+            <input
+              ref={cameraInputRef}
+              type="file"
+              accept="image/*"
+              capture="environment"
+              className="hidden"
+              onChange={handleCameraCapture}
             />
             <Textarea
               placeholder="Type your symptoms or questions..."
