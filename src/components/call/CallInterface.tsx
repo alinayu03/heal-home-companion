@@ -12,7 +12,7 @@ type Message = {
   type: 'text' | 'image';
 };
 
-const ChatInterface: React.FC = () => {
+const CallInterface: React.FC = () => {
   const [messages, setMessages] = useState<Message[]>([
     {
       id: '1',
@@ -283,4 +283,4 @@ const ChatInterface: React.FC = () => {
   );
 };
 
-export default ChatInterface;
+export default CallInterface;

@@ -3,6 +3,7 @@ import React, { useState } from 'react';
 import Navbar from '@/components/layout/Navbar';
 import Sidebar from '@/components/layout/Sidebar';
 import HomeInterface from '@/components/home/HomeInterface';
+import CallInterface from '@/components/call/CallInterface';
 import ChatInterface from '@/components/chat/ChatInterface';
 import DailyCheckIn from '@/components/checkIn/DailyCheckIn';
 import WellnessTips from '@/components/wellness/WellnessTips';
@@ -16,6 +17,8 @@ const Index = () => {
     switch (activeTab) {
       case 'home':
         return <HomeInterface />;
+      case 'call':
+        return <CallInterface />;
       case 'chat':
         return <ChatInterface />;
       case 'checkin':

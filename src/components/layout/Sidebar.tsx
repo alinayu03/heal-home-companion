@@ -3,6 +3,7 @@ import React from 'react';
 import { 
   Home,
   Camera, 
+  Phone,
   MessageCircle, 
   Calendar, 
   Heart, 
@@ -44,6 +45,7 @@ interface SidebarProps {
 const Sidebar: React.FC<SidebarProps> = ({ activeTab, setActiveTab }) => {
   const navItems = [
     { icon: Home, label: "Home", id: "home" },
+    { icon: Phone, label: "Call", id: "call" },
     { icon: MessageCircle, label: "Chat", id: "chat" },
     { icon: Calendar, label: "Check-in", id: "checkin" },
     { icon: Heart, label: "Wellness", id: "wellness" },
