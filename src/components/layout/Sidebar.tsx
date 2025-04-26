@@ -1,6 +1,7 @@
 
 import React from 'react';
 import { 
+  Home,
   Camera, 
   MessageCircle, 
   Calendar, 
@@ -42,7 +43,7 @@ interface SidebarProps {
 
 const Sidebar: React.FC<SidebarProps> = ({ activeTab, setActiveTab }) => {
   const navItems = [
-    { icon: Camera, label: "Analyze", id: "analyze" },
+    { icon: Home, label: "Home", id: "home" },
     { icon: MessageCircle, label: "Chat", id: "chat" },
     { icon: Calendar, label: "Check-in", id: "checkin" },
     { icon: Heart, label: "Wellness", id: "wellness" },
