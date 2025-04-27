@@ -1,31 +1,31 @@
-
-import React, { useState } from 'react';
-import Navbar from '@/components/layout/Navbar';
-import Sidebar from '@/components/layout/Sidebar';
-import HomeInterface from '@/components/home/HomeInterface';
-import CallInterface from '@/components/call/CallInterface';
-import ChatInterface from '@/components/chat/ChatInterface';
-import DailyCheckIn from '@/components/checkIn/DailyCheckIn';
-import WellnessTips from '@/components/wellness/WellnessTips';
-import ProfileInfo from '@/components/profile/ProfileInfo';
+import React, { useState } from "react";
+import Navbar from "@/components/layout/Navbar";
+import Sidebar from "@/components/layout/Sidebar";
+import HomeInterface from "@/components/home/HomeInterface";
+import CallInterface from "@/components/call/CallInterface";
+import CallUserInterface from "@/components/call-user/CallUserInterface";
+import ChatInterface from "@/components/chat/ChatInterface";
+import DailyCheckIn from "@/components/checkIn/DailyCheckIn";
+import WellnessTips from "@/components/wellness/WellnessTips";
+import ProfileInfo from "@/components/profile/ProfileInfo";
 
 const Index = () => {
-  const [activeTab, setActiveTab] = useState('home');
+  const [activeTab, setActiveTab] = useState("home");
 
   // Render the active component based on selected tab
   const renderActiveComponent = () => {
     switch (activeTab) {
-      case 'home':
+      case "home":
         return <HomeInterface />;
-      case 'call':
-        return <CallInterface />;
-      case 'chat':
+      case "call":
+        return <CallUserInterface />;
+      case "chat":
         return <ChatInterface />;
-      case 'checkin':
+      case "checkin":
         return <DailyCheckIn />;
-      case 'wellness':
+      case "wellness":
         return <WellnessTips />;
-      case 'profile':
+      case "profile":
         return <ProfileInfo />;
       default:
         return <ChatInterface />;
@@ -35,14 +35,12 @@ const Index = () => {
   return (
     <div className="min-h-screen flex flex-col">
       <Navbar />
-      
+
       <div className="flex flex-1">
         <Sidebar activeTab={activeTab} setActiveTab={setActiveTab} />
-        
+
         <main className="flex-1 bg-gray-50 p-6">
-          <div className="max-w-5xl mx-auto">
-            {renderActiveComponent()}
-          </div>
+          <div className="max-w-5xl mx-auto">{renderActiveComponent()}</div>
         </main>
       </div>
     </div>
