@@ -172,7 +172,7 @@ const CallInterface = () => {
       // {
       //   key: "nextStepPlanning",
       //   question:
-      //     "Would you like me to contact your surgeon’s office now for further evaluation?",
+      //     "Would you like me to contact your surgeon's office now for further evaluation?",
       // },
     ];
     // Update recovery status with the user's response
@@ -203,7 +203,7 @@ const CallInterface = () => {
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a");
     a.href = url;
-    a.download = "conversation_transcript.json";
+    a.download = "transcript.txt";
     a.click();
     URL.revokeObjectURL(url);
   };
@@ -216,6 +216,25 @@ const CallInterface = () => {
     speak(conversation[0].content, () => {
       setListening(true);
     });
+  };
+
+  const handleEndCall = () => {
+    // Stop any ongoing speech
+    window.speechSynthesis.cancel();
+    
+    // Stop listening if active
+    if (recognitionRef.current && listening) {
+      recognitionRef.current.stop();
+      setListening(false);
+    }
+    
+    // Reset the conversation state
+    setIsAnswering(false);
+    
+    // Save transcript with the closing message
+    setTimeout(() => {
+      saveTranscript();
+    }, 500);
   };
 
   return (
@@ -246,10 +265,17 @@ const CallInterface = () => {
             </div>
           </div>
 
-          <div className="real-time-transcript">
+          <div className="real-time-transcript mb-4">
             <h2 className="text-xl font-semibold">Your Response:</h2>
             <p className="p-4 bg-gray-200 rounded-lg">{userTranscript}</p>
           </div>
+
+          <button
+            className="px-6 py-3 bg-red-500 text-white rounded-md shadow-md hover:bg-red-600 focus:outline-none"
+            onClick={handleEndCall}
+          >
+            End Call
+          </button>
 
           {loading ? (
             <p className="text-center text-gray-500">Loading...</p>

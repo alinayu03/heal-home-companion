@@ -1,0 +1,16 @@
+{
+  "labels": [
+    "normal",
+    "needs clinical attention"
+  ],
+  "scores": [
+    10,
+    90
+  ],
+  "matched_keywords": [
+    "swelling",
+    "pain"
+  ],
+  "result": "⚠️ Needs Clinical Attention",
+  "method": "keyword"
+}
