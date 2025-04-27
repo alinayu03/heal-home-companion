@@ -4,10 +4,13 @@
     "needs clinical attention"
   ],
   "scores": [
-    "0.23",
-    "99.77"
+    10,
+    90
+  ],
+  "matched_keywords": [
+    "swelling",
+    "pain"
   ],
   "result": "⚠️ Needs Clinical Attention",
-  "model": "facebook/bart-large-mnli",
-  "method": "huggingface-zero-shot"
+  "method": "keyword"
 }

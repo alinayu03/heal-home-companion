@@ -1,7 +1,7 @@
-import React from 'react';
-import { Bell, User, Phone } from 'lucide-react';
+import React from "react";
+import { Bell, User, Phone } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Notification } from './Notification';
+import { Notification } from "./Notification";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
   DropdownMenu,
@@ -18,7 +18,7 @@ interface NavbarProps {
 
 const Navbar: React.FC<NavbarProps> = ({ setActiveTab }) => {
   const handleNewCallClick = () => {
-    setActiveTab('profile');
+    setActiveTab("profile"); // Corrected to 'profile'
   };
 
   return (
@@ -40,12 +40,16 @@ const Navbar: React.FC<NavbarProps> = ({ setActiveTab }) => {
               </span>
             </Button>
           </DropdownMenuTrigger>
-          <DropdownMenuContent align="end" className="w-72" style={{ width: 'inherit' }}>
+          <DropdownMenuContent
+            align="end"
+            className="w-72"
+            style={{ width: "inherit" }}
+          >
             <DropdownMenuLabel>Notifications</DropdownMenuLabel>
             <DropdownMenuSeparator />
             <DropdownMenuItem
               className="flex items-center space-x-2 cursor-pointer"
-              onClick={handleNewCallClick}
+              onClick={handleNewCallClick} // Use the handler here
             >
               <div className="w-full">
                 <Notification />
@@ -61,7 +65,10 @@ const Navbar: React.FC<NavbarProps> = ({ setActiveTab }) => {
 
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
-            <Button variant="ghost" className="relative rounded-full h-8 w-8 p-0">
+            <Button
+              variant="ghost"
+              className="relative rounded-full h-8 w-8 p-0"
+            >
               <Avatar className="h-8 w-8">
                 <AvatarImage src="" />
                 <AvatarFallback className="bg-health-secondary text-health-primary">
@@ -74,7 +81,9 @@ const Navbar: React.FC<NavbarProps> = ({ setActiveTab }) => {
           <DropdownMenuContent align="end" className="w-48">
             <DropdownMenuLabel>My Account</DropdownMenuLabel>
             <DropdownMenuSeparator />
-            <DropdownMenuItem>Profile</DropdownMenuItem>
+            <DropdownMenuItem onClick={() => setActiveTab("profile")}>
+              Profile
+            </DropdownMenuItem>
             <DropdownMenuItem>Settings</DropdownMenuItem>
             <DropdownMenuItem>Medical Information</DropdownMenuItem>
             <DropdownMenuSeparator />
