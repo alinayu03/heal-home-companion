@@ -1,8 +1,10 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { Send, Upload, Camera } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Textarea } from '@/components/ui/textarea';
+import ChatMessage from './ChatMessage';
+import TypingIndicator from './TypingIndicator';
 
 type Message = {
   id: string;
@@ -26,12 +28,20 @@ const ChatInterface: React.FC = () => {
   const [isTyping, setIsTyping] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const cameraInputRef = useRef<HTMLInputElement>(null);
-  
+  const messagesEndRef = useRef<HTMLDivElement>(null);
+
+  const scrollToBottom = () => {
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  };
+
+  useEffect(() => {
+    scrollToBottom();
+  }, [messages, isTyping]);
+
   const callAnthropicAPI = async (userInput: string, imageData?: string) => {
     setIsTyping(true);
     
     try {
-      // Prepare the messages for the API
       const apiMessages = messages.map(msg => ({
         role: msg.sender === 'user' ? 'user' : 'assistant',
         content: msg.type === 'image' && msg.sender === 'user' 
@@ -41,7 +51,6 @@ const ChatInterface: React.FC = () => {
           : [{ type: "text", text: msg.content }]
       }));
       
-      // Add the new user message
       if (imageData) {
         apiMessages.push({
           role: 'user',
@@ -56,7 +65,6 @@ const ChatInterface: React.FC = () => {
         });
       }
       
-      // Make the API request
       const response = await fetch('/api/anthropic', {
         method: 'POST',
         headers: {
@@ -71,7 +79,6 @@ const ChatInterface: React.FC = () => {
       
       const data = await response.json();
       
-      // Add the assistant's response to the messages
       const assistantMessage: Message = {
         id: Date.now().toString(),
         content: data.response,
@@ -84,7 +91,6 @@ const ChatInterface: React.FC = () => {
     } catch (error) {
       console.error('Error calling Anthropic API:', error);
       
-      // Add an error message
       const errorMessage: Message = {
         id: Date.now().toString(),
         content: "I'm sorry, there was an error processing your request. Please try again later.",
@@ -98,7 +104,7 @@ const ChatInterface: React.FC = () => {
       setIsTyping(false);
     }
   };
-  
+
   const handleSendMessage = () => {
     if (inputValue.trim() === '') return;
     
@@ -112,12 +118,11 @@ const ChatInterface: React.FC = () => {
     
     setMessages(prev => [...prev, userMessage]);
     
-    // Call the Anthropic API
     callAnthropicAPI(inputValue);
     
     setInputValue('');
   };
-  
+
   const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
@@ -135,13 +140,12 @@ const ChatInterface: React.FC = () => {
         
         setMessages(prev => [...prev, userMessage]);
         
-        // Call the Anthropic API with the image
         callAnthropicAPI("Please analyze this image related to my health concern.", imageData);
       };
       reader.readAsDataURL(file);
     }
   };
-  
+
   const handleCameraCapture = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
@@ -159,94 +163,67 @@ const ChatInterface: React.FC = () => {
         
         setMessages(prev => [...prev, userMessage]);
         
-        // Call the Anthropic API with the image
         callAnthropicAPI("Please analyze this image I just captured related to my health concern.", imageData);
       };
       reader.readAsDataURL(file);
     }
   };
-  
+
   const handleKeyDown = (e: React.KeyboardEvent) => {
     if (e.key === 'Enter' && !e.shiftKey) {
       e.preventDefault();
       handleSendMessage();
     }
   };
-  
+
   return (
-    <div className="animate-fade-in">
-      <Card className="max-w-2xl mx-auto border-none shadow-lg h-[600px] flex flex-col">
-        <CardHeader>
-          <CardTitle className="text-2xl font-semibold text-gray-800">Health Assistant</CardTitle>
+    <div className="w-full max-w-3xl mx-auto">
+      <Card className="border-none shadow-lg rounded-xl">
+        <CardHeader className="border-b bg-card px-6">
+          <CardTitle className="text-xl font-medium">Health Assistant</CardTitle>
           <CardDescription>
-            Describe your symptoms or share photos for analysis
+            Share your health concerns through text or images
           </CardDescription>
         </CardHeader>
-        <CardContent className="flex-1 overflow-y-auto pb-4">
-          <div className="space-y-4">
+        <CardContent className="p-0">
+          <div className="h-[500px] overflow-y-auto p-6 space-y-4 scroll-smooth">
             {messages.map((message) => (
-              <div 
-                key={message.id} 
-                className={`flex ${message.sender === 'user' ? 'justify-end' : 'justify-start'}`}
-              >
-                <div 
-                  className={`max-w-[80%] rounded-2xl px-4 py-2 ${
-                    message.sender === 'user' 
-                      ? 'bg-blue-600 text-white' 
-                      : 'bg-gray-100 text-gray-800'
-                  }`}
-                >
-                  {message.type === 'image' ? (
-                    <div className="space-y-2">
-                      <img 
-                        src={message.content} 
-                        alt="Uploaded symptom" 
-                        className="rounded-lg max-h-48 w-auto"
-                      />
-                    </div>
-                  ) : (
-                    <p className="text-sm whitespace-pre-wrap">{message.content}</p>
-                  )}
-                  <p className="text-xs opacity-70 mt-1">
-                    {message.timestamp.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
-                  </p>
-                </div>
-              </div>
+              <ChatMessage key={message.id} message={message} />
             ))}
-            
-            {isTyping && (
-              <div className="flex justify-start">
-                <div className="max-w-[80%] rounded-2xl px-4 py-2 bg-gray-100">
-                  <div className="flex space-x-1 items-center h-6">
-                    <div className="w-2 h-2 rounded-full bg-gray-400 animate-pulse"></div>
-                    <div className="w-2 h-2 rounded-full bg-gray-400 animate-pulse delay-150"></div>
-                    <div className="w-2 h-2 rounded-full bg-gray-400 animate-pulse delay-300"></div>
-                  </div>
-                </div>
-              </div>
-            )}
+            {isTyping && <TypingIndicator />}
+            <div ref={messagesEndRef} />
           </div>
         </CardContent>
-        <CardFooter className="border-t p-4 bg-white">
-          <div className="flex w-full items-center space-x-2">
-            <Button 
-              variant="outline" 
-              size="icon"
-              onClick={() => fileInputRef.current?.click()}
-              className="flex-shrink-0"
-              title="Upload image"
-            >
-              <Upload className="h-4 w-4" />
-            </Button>
-            <Button 
-              variant="outline" 
-              size="icon"
-              onClick={() => cameraInputRef.current?.click()}
-              className="flex-shrink-0"
-              title="Take photo"
-            >
-              <Camera className="h-4 w-4" />
-            </Button>
+        <CardFooter className="border-t p-4 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+          <form 
+            onSubmit={(e) => {
+              e.preventDefault();
+              handleSendMessage();
+            }} 
+            className="flex w-full items-end gap-2"
+          >
+            <div className="flex-shrink-0 flex gap-2">
+              <Button
+                type="button"
+                variant="outline"
+                size="icon"
+                onClick={() => fileInputRef.current?.click()}
+                className="rounded-full"
+                title="Upload image"
+              >
+                <Upload className="h-4 w-4" />
+              </Button>
+              <Button
+                type="button"
+                variant="outline"
+                size="icon"
+                onClick={() => cameraInputRef.current?.click()}
+                className="rounded-full"
+                title="Take photo"
+              >
+                <Camera className="h-4 w-4" />
+              </Button>
+            </div>
             <input
               ref={fileInputRef}
               type="file"
@@ -263,20 +240,22 @@ const ChatInterface: React.FC = () => {
               onChange={handleCameraCapture}
             />
             <Textarea
-              placeholder="Type your symptoms or questions..."
               value={inputValue}
               onChange={(e) => setInputValue(e.target.value)}
               onKeyDown={handleKeyDown}
-              className="flex-1 min-h-[60px] max-h-[120px]"
+              placeholder="Type your message..."
+              className="flex-1 min-h-[44px] max-h-[144px] resize-none"
+              rows={1}
             />
             <Button 
-              onClick={handleSendMessage} 
-              disabled={inputValue.trim() === ''}
-              className="bg-blue-600 hover:bg-blue-700 h-10 w-10 p-0 rounded-full flex-shrink-0"
+              type="submit"
+              size="icon" 
+              disabled={inputValue.trim() === ''} 
+              className="rounded-full h-11 w-11 flex-shrink-0"
             >
               <Send className="h-4 w-4" />
             </Button>
-          </div>
+          </form>
         </CardFooter>
       </Card>
     </div>
