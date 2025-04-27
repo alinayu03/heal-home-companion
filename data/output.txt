@@ -1,0 +1,13 @@
+{
+  "labels": [
+    "normal",
+    "needs clinical attention"
+  ],
+  "scores": [
+    "0.23",
+    "99.77"
+  ],
+  "result": "⚠️ Needs Clinical Attention",
+  "model": "facebook/bart-large-mnli",
+  "method": "huggingface-zero-shot"
+}

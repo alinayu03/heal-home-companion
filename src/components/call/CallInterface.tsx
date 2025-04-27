@@ -203,7 +203,7 @@ const CallInterface = () => {
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a");
     a.href = url;
-    a.download = "conversation_transcript.json";
+    a.download = "transcript.json";
     a.click();
     URL.revokeObjectURL(url);
   };
@@ -236,9 +236,8 @@ const CallInterface = () => {
               {conversation.map((message, index) => (
                 <div
                   key={index}
-                  className={`p-2 rounded-lg ${
-                    message.role === "nurse" ? "bg-blue-200" : "bg-green-200"
-                  }`}
+                  className={`p-2 rounded-lg ${message.role === "nurse" ? "bg-blue-200" : "bg-green-200"
+                    }`}
                 >
                   <p>{message.content}</p>
                 </div>
